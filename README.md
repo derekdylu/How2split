@@ -1,4 +1,4 @@
-# How2split (code: Splitwiz)
+# How2split
 
 How2split 是一款極輕量化線上帳目分攤工具，無需下載應用程式、無需註冊帳號，只要建立活動然後記住並分享連結，即可立即開始使用。
 
