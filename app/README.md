@@ -2,6 +2,8 @@
 
 Cross-platform app: **web**, **iOS**, and **Android** from one TypeScript + React Native (Expo) codebase. Uses **Bun** as the package manager and runtime.
 
+This is the migrated version of the original `frontend/` (React web) interface: same flows (create event, add expenses/transfers, settle) with React Navigation and native-friendly UI.
+
 ## Prerequisites
 
 - [Bun](https://bun.sh/) installed
@@ -14,6 +16,8 @@ Cross-platform app: **web**, **iOS**, and **Android** from one TypeScript + Reac
 ```bash
 bun install
 ```
+
+Optional: copy `.env.example` to `.env` and set `EXPO_PUBLIC_SERVER_URL` to your backend URL (defaults to production if unset).
 
 ## Run
 
