@@ -12,6 +12,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { getServerUrl, getWebBaseUrl } from '../config';
 import { copyToClipboard } from '../lib/clipboard';
 import { useToast } from '../contexts/ToastContext';
+import { useLocale } from '../contexts/LocaleContext';
 import type { Transaction, ExpenseTransaction, TransferTransaction, SettleItem } from '../types';
 import { AddEntry } from '../components/AddEntry';
 import { EditEntry } from '../components/EditEntry';
@@ -74,8 +75,9 @@ export function Event() {
   const navigation = useNavigation<any>();
   const id = route.params?.id as string;
   const { showToast } = useToast();
+  const { t } = useLocale();
 
-  const [eventName, setEventName] = useState('Loading...');
+  const [eventName, setEventName] = useState('');
   const [accounts, setAccounts] = useState<string[]>([]);
   const [data, setData] = useState<Transaction[] | null>(null);
   const [openIndex, setOpenIndex] = useState(-1);
@@ -170,25 +172,25 @@ export function Event() {
   };
 
   const confirmAdded = () => {
-    showToast('已新增帳目');
+    showToast(t('toast.entryAdded'));
     reload();
   };
   const confirmEdited = () => {
-    showToast('已更新帳目');
+    showToast(t('toast.entryUpdated'));
     reload();
   };
 
   const confirmDelete = (transactionId: string) => {
-    Alert.alert('刪除帳目', '確定要刪除此筆帳目？', [
-      { text: '取消', style: 'cancel' },
+    Alert.alert(t('event.deleteTitle'), t('event.deleteMessage'), [
+      { text: t('event.cancel'), style: 'cancel' },
       {
-        text: '刪除',
+        text: t('event.deleteOk'),
         style: 'destructive',
         onPress: async () => {
           try {
             const res = await fetch(`${getServerUrl()}/transactions/${transactionId}`, { method: 'DELETE' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            showToast('已經刪除帳目', 'info');
+            showToast(t('toast.entryDeleted'), 'info');
             reload();
           } catch (e) {
             console.error(e);
@@ -199,10 +201,10 @@ export function Event() {
   };
 
   const confirmSettle = (item: SettleItem) => {
-    Alert.alert('確認轉帳', '確認新增此筆轉帳以結清欠款？', [
-      { text: '取消', style: 'cancel' },
+    Alert.alert(t('event.settleConfirmTitle'), t('event.settleConfirmMessage'), [
+      { text: t('event.cancel'), style: 'cancel' },
       {
-        text: '確認',
+        text: t('event.settleConfirmOk'),
         onPress: async () => {
           try {
             const res = await fetch(`${getServerUrl()}/transactions`, {
@@ -218,7 +220,7 @@ export function Event() {
               }),
             });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            showToast('已新增結清轉帳');
+            showToast(t('toast.settleAdded'));
             reload();
           } catch (e) {
             console.error(e);
@@ -241,7 +243,7 @@ export function Event() {
   const doCopyLink = async () => {
     const link = `${getWebBaseUrl()}/events/${id}`;
     await copyToClipboard(link);
-    showToast('共享連結已複製');
+    showToast(t('toast.linkCopied'));
   };
 
   if (data === null) {
@@ -292,7 +294,7 @@ export function Event() {
           visible={openTransModal}
           onClose={() => setOpenTransModal(false)}
           onSuccess={() => {
-            showToast('已新增轉帳');
+            showToast(t('toast.transferAdded'));
             reload();
           }}
           accounts={accounts}
@@ -304,7 +306,7 @@ export function Event() {
           visible={openTransEditModal}
           onClose={() => setOpenTransEditModal(false)}
           onSuccess={() => {
-            showToast('已更新轉帳');
+            showToast(t('toast.transferUpdated'));
             reload();
           }}
           accounts={accounts}
@@ -323,13 +325,13 @@ export function Event() {
         </View>
         <View style={styles.buttonRow}>
           <Pressable style={[styles.btn, styles.btnSecondary]} onPress={doCopyLink}>
-            <Text>共享連結</Text>
+            <Text>{t('event.copyLink')}</Text>
           </Pressable>
           <Pressable style={[styles.btn, styles.btnSecondary]} onPress={() => setOpenEntryModal(true)}>
-            <Text>新增支出</Text>
+            <Text>{t('event.addExpense')}</Text>
           </Pressable>
           <Pressable style={[styles.btn, styles.btnSecondary]} onPress={() => setOpenTransModal(true)}>
-            <Text>新增轉帳</Text>
+            <Text>{t('event.addTransfer')}</Text>
           </Pressable>
           {loading ? (
             <Pressable style={[styles.btn, styles.btnPrimary]} disabled>
@@ -337,7 +339,7 @@ export function Event() {
             </Pressable>
           ) : (
             <Pressable style={[styles.btn, styles.btnPrimary]} onPress={runSettle}>
-              <Text style={styles.btnPrimaryText}>結算</Text>
+              <Text style={styles.btnPrimaryText}>{t('event.settle')}</Text>
             </Pressable>
           )}
         </View>
@@ -349,19 +351,23 @@ export function Event() {
                 {settleList.map((item, i) => (
                   <View key={i} style={styles.settleItem}>
                     <Text style={styles.settleText}>
-                      {item.debtor} 應付 {item.creditor} {round(item.settledAmount)} 元
+                      {t('event.settleLine', {
+                        debtor: item.debtor,
+                        creditor: item.creditor,
+                        amount: round(item.settledAmount) as number,
+                      })}
                     </Text>
                     <Pressable style={styles.settleBtn} onPress={() => confirmSettle(item)}>
-                      <Text style={styles.settleBtnText}>結清</Text>
+                      <Text style={styles.settleBtnText}>{t('event.settleClear')}</Text>
                     </Pressable>
                   </View>
                 ))}
               </>
             ) : (
-              <Text style={styles.noSettle}>無需結算🎉</Text>
+              <Text style={styles.noSettle}>{t('event.noSettle')}</Text>
             )}
             <Pressable onPress={() => setShowSettle(false)}>
-              <Text style={styles.hideSettle}>隱藏結算</Text>
+              <Text style={styles.hideSettle}>{t('event.hideSettle')}</Text>
             </Pressable>
           </View>
         )}
@@ -377,15 +383,18 @@ export function Event() {
                 <>
                   <View style={styles.transMain}>
                     <Text style={styles.transText}>
-                      {(item as ExpenseTransaction).name} 由 {(item as ExpenseTransaction).payer} 先付{' '}
-                      {round((item as ExpenseTransaction).value)} 元
+                      {t('event.expenseLine', {
+                        name: (item as ExpenseTransaction).name,
+                        payer: (item as ExpenseTransaction).payer,
+                        value: round((item as ExpenseTransaction).value) as number,
+                      })}
                     </Text>
                     <View style={styles.transActions}>
                       <Pressable onPress={() => handleOpenEntryEdit(i)} style={styles.smallBtn}>
                         <Text>✎</Text>
                       </Pressable>
                       <Pressable onPress={() => confirmDelete(item._id)} style={[styles.smallBtn, styles.dangerBtn]}>
-                        <Text style={styles.dangerText}>刪</Text>
+                        <Text style={styles.dangerText}>{t('event.deleteShort')}</Text>
                       </Pressable>
                     </View>
                   </View>
@@ -393,11 +402,11 @@ export function Event() {
                     <View style={styles.transDetail}>
                       {Object.entries((item as ExpenseTransaction).shares).map(([member, share]) => (
                         <Text key={member} style={styles.detailRow}>
-                          {member} 分攤 {round(share) || 0} 元
+                          {t('event.shareLine', { member, amount: round(share) || 0 })}
                         </Text>
                       ))}
                       <Text style={styles.detailMeta}>
-                        {renderTime(item.timestamp)} -{(item as ExpenseTransaction).method === 1 ? '平均分攤' : '指定金額'}
+                        {renderTime(item.timestamp)} - {(item as ExpenseTransaction).method === 1 ? t('event.methodEqual') : t('event.methodCustom')}
                       </Text>
                     </View>
                   )}
@@ -407,14 +416,18 @@ export function Event() {
                 <>
                   <View style={styles.transMain}>
                     <Text style={styles.transText}>
-                      {item.payer} 轉 {round(item.value)} 元給 {item.receiver}
+                      {t('event.transferLine', {
+                        payer: item.payer,
+                        receiver: item.receiver,
+                        value: round(item.value) as number,
+                      })}
                     </Text>
                     <View style={styles.transActions}>
                       <Pressable onPress={() => handleOpenTransEdit(i)} style={styles.smallBtn}>
                         <Text>✎</Text>
                       </Pressable>
                       <Pressable onPress={() => confirmDelete(item._id)} style={[styles.smallBtn, styles.dangerBtn]}>
-                        <Text style={styles.dangerText}>刪</Text>
+                        <Text style={styles.dangerText}>{t('event.deleteShort')}</Text>
                       </Pressable>
                     </View>
                   </View>

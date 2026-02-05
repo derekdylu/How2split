@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useLocale } from '../contexts/LocaleContext';
 
 export function Error() {
+  const { t } = useLocale();
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>找不到頁面</Text>
+      <Text style={styles.text}>{t('error.notFound')}</Text>
     </View>
   );
 }

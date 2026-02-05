@@ -1,36 +1,34 @@
 import React from 'react';
-import { View, Text, StyleSheet, Linking, Pressable, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Linking, ScrollView } from 'react-native';
+import { useLocale } from '../contexts/LocaleContext';
 
 export function About() {
+  const { t } = useLocale();
   const openUrl = (url: string) => () => Linking.openURL(url);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>關於本站</Text>
+      <Text style={styles.title}>{t('about.title')}</Text>
+      <Text style={styles.paragraph}>{t('about.intro')}</Text>
       <Text style={styles.paragraph}>
-        How2split 是一款極輕量化線上帳目分攤工具，無需下載應用程式、無需註冊帳號，只要建立活動然後記住並分享連結，即可立即開始使用。
-      </Text>
-      <Text style={styles.paragraph}>
-        此工具由{' '}
+        {t('about.creditsBeforeAuthor')}
         <Text style={styles.link} onPress={openUrl('https://derekdylu.com')}>
           derekdylu
-        </Text>{' '}
-        設計與開發，概念取自 When2meet 的輕量化設計，一切從簡，僅保留核心功能，希望可以讓帳目分攤更加便捷。若您有任何建議與回饋，請不吝填寫{' '}
-        <Text style={styles.link} onPress={openUrl('https://forms.gle/sXuG5QWCHrvB9G628')}>
-          本表單
         </Text>
-        ！
+        {t('about.creditsAfterAuthorBeforeForm')}
+        <Text style={styles.link} onPress={openUrl('https://forms.gle/sXuG5QWCHrvB9G628')}>
+          {t('about.form')}
+        </Text>
+        {t('about.creditsAfterForm')}
       </Text>
       <Text style={styles.paragraph}>
-        如果您願意支持我，可以透過{' '}
+        {t('about.supportBeforeBmc')}
         <Text style={styles.link} onPress={openUrl('https://www.buymeacoffee.com/derekdylu')}>
-          Buy Me A Coffee
-        </Text>{' '}
-        贊助我，感謝您的支持！
+          {t('about.bmc')}
+        </Text>
+        {t('about.supportAfterBmc')}
       </Text>
-      <Text style={styles.paragraph}>
-        開發中功能：(1) 多人付款 (2) 操作記錄 (3) 私人加密活動 (4) 成員刪除與其債權歸屬 (5) English version (6) 帳目類別 (7) 統計資料與圖表 (8) 跨國幣別結算 (9) 自訂活動連結 (10) 活動刪除
-      </Text>
+      <Text style={styles.paragraph}>{t('about.roadmap')}</Text>
     </ScrollView>
   );
 }

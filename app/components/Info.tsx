@@ -1,13 +1,8 @@
 import React from 'react';
 import { Modal, View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
+import { useLocale } from '../contexts/LocaleContext';
 
-const contents = [
-  '1. 輸入成員並建立活動',
-  '2. 記住並分享活動連結',
-  '3. 開始記帳！',
-  '4. 點擊帳目可以查看詳細資訊！',
-  '⚠️ 所有擁有連結的人都可以編輯活動內容，請勿分享連結給不認識的人。',
-];
+const contentKeys = ['info.step1', 'info.step2', 'info.step3', 'info.step4', 'info.warning'] as const;
 
 interface InfoProps {
   visible: boolean;
@@ -15,20 +10,21 @@ interface InfoProps {
 }
 
 export function Info({ visible, onClose }: InfoProps) {
+  const { t } = useLocale();
   return (
     <Modal visible={visible} transparent animationType="fade">
       <Pressable style={styles.overlay} onPress={onClose}>
         <View style={styles.box}>
           <View style={styles.header}>
-            <Text style={styles.title}>How2split</Text>
+            <Text style={styles.title}>{t('info.title')}</Text>
             <Pressable onPress={onClose} hitSlop={12}>
-              <Text style={styles.close}>關閉</Text>
+              <Text style={styles.close}>{t('info.close')}</Text>
             </Pressable>
           </View>
           <ScrollView style={styles.body}>
-            {contents.map((c, i) => (
-              <Text key={i} style={styles.item}>
-                {c}
+            {contentKeys.map((key) => (
+              <Text key={key} style={styles.item}>
+                {t(key)}
               </Text>
             ))}
           </ScrollView>

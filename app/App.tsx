@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ToastProvider } from './contexts/ToastContext';
+import { LocaleProvider } from './contexts/LocaleContext';
 import { Header } from './components/Header';
 import { Info } from './components/Info';
 import { Create } from './screens/Create';
@@ -47,11 +48,13 @@ function Main() {
 export default function App() {
   return (
     <SafeAreaProvider>
-      <ToastProvider>
-        <NavigationContainer>
-          <Main />
-        </NavigationContainer>
-      </ToastProvider>
+      <LocaleProvider>
+        <ToastProvider>
+          <NavigationContainer>
+            <Main />
+          </NavigationContainer>
+        </ToastProvider>
+      </LocaleProvider>
     </SafeAreaProvider>
   );
 }

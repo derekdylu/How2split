@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { getServerUrl } from '../config';
+import { useLocale } from '../contexts/LocaleContext';
 import { SelectOption } from './SelectOption';
 import type { TransferTransaction } from '../types';
 
@@ -23,6 +24,7 @@ interface EditTransProps {
 }
 
 export function EditTrans({ visible, onClose, onSuccess, accounts, eventId, transactionId, data }: EditTransProps) {
+  const { t } = useLocale();
   const [entryValue, setEntryValue] = useState(String(data.value));
   const [payer, setPayer] = useState(data.payer);
   const [receiver, setReceiver] = useState(data.receiver);
@@ -87,29 +89,29 @@ export function EditTrans({ visible, onClose, onSuccess, accounts, eventId, tran
       <Pressable style={styles.overlay} onPress={onClose}>
         <View style={styles.box}>
           <View style={styles.header}>
-            <Text style={styles.title}>編輯轉帳</Text>
+            <Text style={styles.title}>{t('trans.titleEdit')}</Text>
             <Pressable onPress={onClose} hitSlop={12}>
-              <Text style={styles.close}>關閉</Text>
+              <Text style={styles.close}>{t('trans.close')}</Text>
             </Pressable>
           </View>
           <View style={styles.body}>
             <View style={styles.row}>
-              <Text style={styles.label}>付款人</Text>
-              <SelectOption value={payer} options={options} onSelect={setPayer} placeholder="付款人" />
+              <Text style={styles.label}>{t('trans.payer')}</Text>
+              <SelectOption value={payer} options={options} onSelect={setPayer} placeholder={t('trans.payerPlaceholder')} />
             </View>
             <View style={styles.row}>
-              <Text style={styles.label}>金額</Text>
+              <Text style={styles.label}>{t('trans.amount')}</Text>
               <TextInput
                 style={[styles.input, entryValueError && styles.inputError]}
-                placeholder="金額"
+                placeholder={t('trans.amountPlaceholder')}
                 value={entryValue}
                 onChangeText={updateValue}
                 keyboardType="decimal-pad"
               />
             </View>
             <View style={styles.row}>
-              <Text style={styles.label}>收款人</Text>
-              <SelectOption value={receiver} options={options} onSelect={setReceiver} placeholder="收款人" />
+              <Text style={styles.label}>{t('trans.receiver')}</Text>
+              <SelectOption value={receiver} options={options} onSelect={setReceiver} placeholder={t('trans.receiverPlaceholder')} />
             </View>
             {loading ? (
               <ActivityIndicator style={styles.loader} />
@@ -119,7 +121,7 @@ export function EditTrans({ visible, onClose, onSuccess, accounts, eventId, tran
                 onPress={submit}
                 disabled={!valid}
               >
-                <Text style={styles.btnPrimaryText}>儲存</Text>
+                <Text style={styles.btnPrimaryText}>{t('trans.save')}</Text>
               </Pressable>
             )}
           </View>

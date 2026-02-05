@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { getServerUrl } from '../config';
 import { useToast } from '../contexts/ToastContext';
+import { useLocale } from '../contexts/LocaleContext';
 
 interface EditEventProps {
   visible: boolean;
@@ -22,6 +23,7 @@ interface EditEventProps {
 
 export function EditEvent({ visible, onClose, data, eventId, onNavigate }: EditEventProps) {
   const { showToast } = useToast();
+  const { t } = useLocale();
   const [eventName, setEventName] = useState(data.name);
   const [eventAccounts, setEventAccounts] = useState<string[]>(data.accounts);
   const [inputMember, setInputMember] = useState('');
@@ -33,7 +35,7 @@ export function EditEvent({ visible, onClose, data, eventId, onNavigate }: EditE
     const trimmed = inputMember.trim();
     if (!trimmed) return;
     if (eventAccounts.includes(trimmed)) {
-      showToast('成員名稱重複', 'error');
+      showToast(t('toast.duplicateMemberEvent'), 'error');
       return;
     }
     setEventAccounts([...eventAccounts, trimmed]);
@@ -78,9 +80,9 @@ export function EditEvent({ visible, onClose, data, eventId, onNavigate }: EditE
       <Pressable style={styles.overlay} onPress={() => submitEvent()}>
         <View style={styles.box}>
           <View style={styles.header}>
-            <Text style={styles.title}>編輯活動</Text>
+            <Text style={styles.title}>{t('editEvent.title')}</Text>
             <Pressable onPress={() => submitEvent()} hitSlop={12}>
-              <Text style={styles.close}>關閉（儲存）</Text>
+              <Text style={styles.close}>{t('editEvent.close')}</Text>
             </Pressable>
           </View>
           {loading ? (
@@ -89,14 +91,14 @@ export function EditEvent({ visible, onClose, data, eventId, onNavigate }: EditE
             <ScrollView style={styles.body}>
               <TextInput
                 style={styles.input}
-                placeholder="活動名稱"
+                placeholder={t('editEvent.eventNamePlaceholder')}
                 value={eventName}
                 onChangeText={setEventName}
               />
               <View style={styles.row}>
                 <TextInput
                   style={[styles.input, styles.inputFlex]}
-                  placeholder="成員名稱"
+                  placeholder={t('editEvent.memberPlaceholder')}
                   value={inputMember}
                   onChangeText={setInputMember}
                   onSubmitEditing={addMember}
@@ -106,10 +108,10 @@ export function EditEvent({ visible, onClose, data, eventId, onNavigate }: EditE
                   onPress={addMember}
                   disabled={!inputMember.trim()}
                 >
-                  <Text style={styles.btnText}>新增成員</Text>
+                  <Text style={styles.btnText}>{t('editEvent.addMember')}</Text>
                 </Pressable>
               </View>
-              <Text style={styles.hint}>*關閉視窗即自動更新，更新後無法刪除既有成員*</Text>
+              <Text style={styles.hint}>{t('editEvent.hint')}</Text>
               {eventAccounts.map((member) => (
                 <View key={member} style={styles.listItem}>
                   <Text style={styles.listItemText}>{member}</Text>
@@ -118,7 +120,7 @@ export function EditEvent({ visible, onClose, data, eventId, onNavigate }: EditE
                     disabled={originalAccounts.includes(member)}
                     style={originalAccounts.includes(member) ? styles.deleteBtnDisabled : styles.deleteBtn}
                   >
-                    <Text style={styles.deleteBtnText}>刪除</Text>
+                    <Text style={styles.deleteBtnText}>{t('editEvent.delete')}</Text>
                   </Pressable>
                 </View>
               ))}

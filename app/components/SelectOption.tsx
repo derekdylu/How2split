@@ -8,6 +8,8 @@ import {
   ScrollView,
 } from 'react-native';
 
+import { useLocale } from '../contexts/LocaleContext';
+
 interface SelectOptionProps {
   value: string;
   options: { value: string; label: string }[];
@@ -15,9 +17,11 @@ interface SelectOptionProps {
   placeholder?: string;
 }
 
-export function SelectOption({ value, options, onSelect, placeholder = '請選擇' }: SelectOptionProps) {
+export function SelectOption({ value, options, onSelect, placeholder }: SelectOptionProps) {
+  const { t } = useLocale();
+  const resolvedPlaceholder = placeholder ?? t('select.placeholder');
   const [visible, setVisible] = useState(false);
-  const label = value ? options.find((o) => o.value === value)?.label ?? value : placeholder;
+  const label = value ? options.find((o) => o.value === value)?.label ?? value : resolvedPlaceholder;
 
   const handleSelect = (v: string) => {
     onSelect(v);

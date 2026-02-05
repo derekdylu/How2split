@@ -41,10 +41,12 @@ export const en = {
   'about.title': 'About',
   'about.intro':
     'How2split is a minimal expense-splitting tool. No app install, no sign-up—create an event, share the link, and start splitting.',
-  'about.credits':
-    'Designed and built by {{author}}. Inspired by When2meet’s keep-it-simple approach. Feedback welcome via {{form}}.',
+  'about.creditsBeforeAuthor': 'Designed and built by ',
+  'about.creditsAfterAuthorBeforeForm': ". Inspired by When2meet's keep-it-simple approach. Feedback welcome via ",
+  'about.creditsAfterForm': '.',
   'about.form': 'this form',
-  'about.support': 'You can support the project via {{bmc}}.',
+  'about.supportBeforeBmc': 'You can support the project via ',
+  'about.supportAfterBmc': '.',
   'about.bmc': 'Buy Me A Coffee',
   'about.thanks': 'Thank you!',
   'about.roadmap':
@@ -54,6 +56,7 @@ export const en = {
   'error.notFound': 'Page not found',
 
   // Event
+  'event.loading': 'Loading…',
   'event.editEvent': 'Edit event',
   'event.copyLink': 'Share link',
   'event.addExpense': 'Add expense',
@@ -69,6 +72,7 @@ export const en = {
   'event.deleteTitle': 'Delete entry',
   'event.deleteMessage': 'Are you sure you want to delete this entry?',
   'event.deleteOk': 'Delete',
+  'event.deleteShort': 'Del',
   'event.cancel': 'Cancel',
   'event.expenseLine': '{{name}} paid by {{payer}} {{value}}',
   'event.transferLine': '{{payer}} → {{receiver}} {{value}}',

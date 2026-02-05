@@ -12,10 +12,12 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { getServerUrl } from '../config';
 import { useToast } from '../contexts/ToastContext';
+import { useLocale } from '../contexts/LocaleContext';
 
 export function Create() {
   const navigation = useNavigation<any>();
   const { showToast } = useToast();
+  const { t } = useLocale();
   const [loading, setLoading] = useState(false);
   const [inputEvent, setInputEvent] = useState('');
   const [inputMember, setInputMember] = useState('');
@@ -25,7 +27,7 @@ export function Create() {
     const trimmed = inputMember.trim();
     if (!trimmed) return;
     if (members.includes(trimmed)) {
-      showToast('成員名稱重複', 'error');
+      showToast(t('toast.duplicateMember'), 'error');
       return;
     }
     setMembers([...members, trimmed]);
@@ -58,7 +60,7 @@ export function Create() {
     } catch (e) {
       console.error(e);
       setLoading(false);
-      showToast('建立活動失敗', 'error');
+      showToast(t('toast.createEventFailed'), 'error');
     }
   };
 
@@ -66,17 +68,17 @@ export function Create() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>建立活動</Text>
+      <Text style={styles.title}>{t('create.title')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="活動名稱"
+        placeholder={t('create.eventNamePlaceholder')}
         value={inputEvent}
         onChangeText={setInputEvent}
       />
       <View style={styles.row}>
         <TextInput
           style={[styles.input, styles.inputFlex]}
-          placeholder="成員名稱"
+          placeholder={t('create.memberPlaceholder')}
           value={inputMember}
           onChangeText={setInputMember}
           onSubmitEditing={addMember}
@@ -86,7 +88,7 @@ export function Create() {
           onPress={addMember}
           disabled={!inputMember.trim()}
         >
-          <Text style={styles.btnText}>新增成員</Text>
+          <Text style={styles.btnText}>{t('create.addMember')}</Text>
         </Pressable>
       </View>
       <View style={styles.list}>
@@ -98,12 +100,12 @@ export function Create() {
               style={styles.deleteBtn}
               hitSlop={8}
             >
-              <Text style={styles.deleteBtnText}>刪除</Text>
+              <Text style={styles.deleteBtnText}>{t('create.delete')}</Text>
             </Pressable>
           </View>
         ))}
       </View>
-      <Text style={styles.hint}>*活動建立後即無法刪除既有成員*</Text>
+      <Text style={styles.hint}>{t('create.hint')}</Text>
       {loading ? (
         <ActivityIndicator size="large" style={styles.loader} />
       ) : (
@@ -112,7 +114,7 @@ export function Create() {
           onPress={submitEvent}
           disabled={!canSubmit}
         >
-          <Text style={[styles.btnText, styles.btnPrimaryText]}>建立活動</Text>
+          <Text style={[styles.btnText, styles.btnPrimaryText]}>{t('create.submit')}</Text>
         </Pressable>
       )}
     </ScrollView>

@@ -10,6 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { getServerUrl } from '../config';
+import { useLocale } from '../contexts/LocaleContext';
 import { SelectOption } from './SelectOption';
 import type { ExpenseTransaction } from '../types';
 
@@ -30,6 +31,7 @@ interface EditEntryProps {
 }
 
 export function EditEntry({ visible, onClose, onSuccess, accounts, eventId, transactionId, data }: EditEntryProps) {
+  const { t } = useLocale();
   const [entryName, setEntryName] = useState(data.name);
   const [entryValue, setEntryValue] = useState(String(data.value));
   const [shares, setShares] = useState<number[]>(() => accounts.map((a) => data.shares[a] ?? 0));
@@ -165,45 +167,45 @@ export function EditEntry({ visible, onClose, onSuccess, accounts, eventId, tran
       <Pressable style={styles.overlay} onPress={onClose}>
         <View style={styles.box}>
           <View style={styles.header}>
-            <Text style={styles.title}>編輯支出</Text>
+            <Text style={styles.title}>{t('entry.titleEdit')}</Text>
             <Pressable onPress={onClose} hitSlop={12}>
-              <Text style={styles.close}>關閉</Text>
+              <Text style={styles.close}>{t('entry.close')}</Text>
             </Pressable>
           </View>
           <ScrollView style={styles.body}>
             <View style={styles.row}>
-              <Text style={styles.label}>帳目</Text>
-              <TextInput style={styles.input} placeholder="帳目名稱" value={entryName} onChangeText={setEntryName} />
+              <Text style={styles.label}>{t('entry.entryName')}</Text>
+              <TextInput style={styles.input} placeholder={t('entry.entryNamePlaceholder')} value={entryName} onChangeText={setEntryName} />
             </View>
             <View style={styles.row}>
-              <Text style={styles.label}>金額</Text>
+              <Text style={styles.label}>{t('entry.amount')}</Text>
               <TextInput
                 style={[styles.input, entryValueError && styles.inputError]}
-                placeholder="帳目金額"
+                placeholder={t('entry.amountPlaceholder')}
                 value={entryValue}
                 onChangeText={updateEntryValue}
                 keyboardType="decimal-pad"
               />
             </View>
             <View style={styles.row}>
-              <Text style={styles.label}>付款人</Text>
-              <SelectOption value={payer} options={options} onSelect={setPayer} placeholder="付款人" />
+              <Text style={styles.label}>{t('entry.payer')}</Text>
+              <SelectOption value={payer} options={options} onSelect={setPayer} placeholder={t('entry.payerPlaceholder')} />
             </View>
             <View style={styles.row}>
-              <Text style={styles.label}>分攤方式</Text>
+              <Text style={styles.label}>{t('entry.method')}</Text>
               <View style={styles.radioRow}>
                 <Pressable style={[styles.radio, method === 1 && styles.radioSelected]} onPress={setMethod1}>
-                  <Text>平均分攤</Text>
+                  <Text>{t('entry.splitEqual')}</Text>
                 </Pressable>
                 <Pressable style={[styles.radio, method === 2 && styles.radioSelected]} onPress={setMethod2}>
-                  <Text>指定金額</Text>
+                  <Text>{t('entry.splitCustom')}</Text>
                 </Pressable>
               </View>
             </View>
             {method === 1 && (
               <>
                 <Pressable style={styles.checkRow} onPress={onCheckAll}>
-                  <Text>{checkAll ? '☑' : indeterminate ? '▣' : '☐'} 全選</Text>
+                  <Text>{checkAll ? '☑' : indeterminate ? '▣' : '☐'} {t('entry.checkAll')}</Text>
                 </Pressable>
                 {accounts.map((m) => (
                   <Pressable key={m} style={styles.checkRow} onPress={() => toggleMember(m)}>
@@ -214,11 +216,11 @@ export function EditEntry({ visible, onClose, onSuccess, accounts, eventId, tran
             )}
             {accounts.map((item, i) => (
               <View key={item} style={styles.shareRow}>
-                <Text>{item} 分擔 {round(shares[i]) || 0} 元</Text>
+                <Text>{t('event.shareLine', { member: item, amount: round(shares[i]) || 0 })}</Text>
                 {method === 2 && (
                   <TextInput
                     style={[styles.inputSmall, sharesError[i] && styles.inputError]}
-                    placeholder="指定金額"
+                    placeholder={t('entry.splitCustom')}
                     value={shares[i] ? String(shares[i]) : ''}
                     onChangeText={(v) => updateShare(i, v)}
                     keyboardType="decimal-pad"
@@ -226,7 +228,7 @@ export function EditEntry({ visible, onClose, onSuccess, accounts, eventId, tran
                 )}
               </View>
             ))}
-            {method === 2 && <Text style={styles.remaining}>剩餘金額: {round(remaining)}</Text>}
+            {method === 2 && <Text style={styles.remaining}>{t('entry.remaining')}: {round(remaining)}</Text>}
             {loading ? (
               <ActivityIndicator style={styles.loader} />
             ) : (
@@ -235,7 +237,7 @@ export function EditEntry({ visible, onClose, onSuccess, accounts, eventId, tran
                 onPress={submit}
                 disabled={!valid}
               >
-                <Text style={styles.btnPrimaryText}>儲存</Text>
+                <Text style={styles.btnPrimaryText}>{t('entry.save')}</Text>
               </Pressable>
             )}
           </ScrollView>
