@@ -1,7 +1,161 @@
 # How2split
 
-How2split 是一款極輕量化線上帳目分攤工具，無需下載應用程式、無需註冊帳號，只要建立活動然後記住並分享連結，即可立即開始使用。
+A minimal online expense-splitting tool. No app download, no sign-up—create an event, share the link, and start splitting bills right away.
 
-此工具由 derekdylu 設計與開發，概念取自 When2meet 的輕量化設計，一切從簡，僅保留核心功能，希望可以讓帳目分攤更加便捷。若您有任何建議與回饋，請不吝填寫 [本表單](https://forms.gle/sXuG5QWCHrvB9G628)！
+Inspired by the simplicity of When2meet, How2split keeps only the core features so sharing costs with friends or roommates stays quick and easy.
 
-如果您願意支持我，可以透過 [Buy Me A Coffee](https://www.buymeacoffee.com/derekdylu) 贊助我，感謝您的支持！
+---
+
+## Features
+
+- **No account required** — Use the app by creating an event and saving or sharing its link.
+- **Events** — Create an event, add participant names, and optionally lock it with a password.
+- **Transactions** — Log expenses (who paid, amount, how to split), then view and edit entries.
+- **Share by link** — Anyone with the event URL can view and add entries (unless the event is locked).
+
+---
+
+## Tech Stack
+
+| Part      | Stack |
+|-----------|--------|
+| Frontend  | React 18, React Router, Ant Design |
+| Backend   | Node.js, Express |
+| Database  | MongoDB (Mongoose) |
+| Hosting   | Frontend: Netlify; Backend: Google App Engine (or e.g. Railway) |
+
+---
+
+## Project Structure
+
+```
+How2split/
+├── backend/           # Express API
+│   ├── server.js     # Routes and MongoDB models
+│   ├── app.yaml      # Google App Engine config
+│   └── package.json
+├── frontend/         # Create React App
+│   ├── public/
+│   ├── src/
+│   │   ├── App.js
+│   │   ├── Components/   # AddEntry, EditEntry, EditEvent, EditTrans, Header, etc.
+│   │   └── Containers/   # Create, Event, About, Error
+│   └── package.json
+├── .nvmrc             # Node version (22)
+└── README.md
+```
+
+---
+
+## Prerequisites
+
+- **Node.js** ≥ 20 (recommended: 22; use `.nvmrc` with `nvm use` if you use nvm).
+- **MongoDB** — A MongoDB instance (e.g. [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)) for the backend.
+
+---
+
+## Getting Started
+
+### 1. Clone and install
+
+```bash
+git clone https://github.com/derekdylu/How2split.git
+cd How2split
+```
+
+### 2. Backend
+
+```bash
+cd backend
+npm install
+```
+
+Create a `.env` in `backend/`:
+
+```env
+MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/<db>?retryWrites=true&w=majority
+PORT=8000
+```
+
+Start the server:
+
+```bash
+npm start
+```
+
+The API runs at `http://localhost:8000`.
+
+### 3. Frontend
+
+In a new terminal:
+
+```bash
+cd frontend
+npm install
+```
+
+Create a `.env` in `frontend/`:
+
+```env
+REACT_APP_SERVER_URL=http://localhost:8000
+```
+
+Start the dev server:
+
+```bash
+npm start
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+---
+
+## API Overview
+
+Base URL (local): `http://localhost:8000`
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET    | `/` | Health check |
+| GET    | `/events/:id` | Get one event |
+| POST   | `/events` | Create event (body: `name`, `accounts[]`, optional `locked`, `password`) |
+| PATCH  | `/events/:id` | Update event |
+| GET    | `/events/:eventId/transactions` | List transactions for an event |
+| GET    | `/transactions/:id` | Get one transaction |
+| POST   | `/transactions` | Create transaction |
+| PATCH  | `/transactions/:id` | Update transaction |
+| DELETE | `/transactions/:id` | Delete transaction |
+
+---
+
+## Deployment
+
+### Backend (e.g. Google App Engine)
+
+- Set `MONGO_URL` and (if needed) `PORT` in the App Engine environment.
+- From the project root:  
+  `cd backend && gcloud app deploy`  
+  (assumes `gcloud` is installed and the project is configured.)
+
+`app.yaml` uses `runtime: nodejs22`.
+
+### Frontend (e.g. Netlify)
+
+- Set env var: `REACT_APP_SERVER_URL=https://your-backend-url`
+- Build command: `npm run build`
+- Publish directory: `build`
+
+The repo includes `public/_redirects` for client-side routing (`/* /index.html 200`).
+
+---
+
+## Feedback & Support
+
+- **Feedback:** [Submit via this form](https://forms.gle/sXuG5QWCHrvB9G628).
+- **Support the project:** [Buy Me A Coffee](https://www.buymeacoffee.com/derekdylu).
+
+---
+
+## Author
+
+Designed and developed by **derekdylu**.
