@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 
 import Create from './Containers/Create/Create';
 import Event from './Containers/Event/Event';
+import EventFallback from './Containers/EventFallback/EventFallback';
 import Error from './Containers/Error/Error';
 import About from './Containers/About/About';
 
@@ -11,6 +12,11 @@ import Header from './Components/Header';
 import Info from './Components/Info';
 
 import './App.css';
+
+const EventRedirect = () => {
+  const { id } = useParams();
+  return <Navigate to={`/event-fallback/${id}`} replace />;
+}
 
 function App() {
   const [openAboutModal, setOpenAboutModal] = useState(false);
@@ -44,7 +50,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Create />} />
           <Route path="/about" element={<About />} />
-          <Route path="/events/:id" element={<Event />} />
+          <Route path="/events/:id" element={<EventRedirect />} />
+          <Route path="/event-fallback/:id" element={<EventFallback />} />
+          <Route path="/event-legacy/:id" element={<Event />} />
           <Route path="*" element={<Error />} />
         </Routes>
       </Router>
